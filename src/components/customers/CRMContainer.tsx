@@ -14,19 +14,13 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { CRM_PIPELINE_STAGES } from '@/lib/crmPipeline';
 
-// Stages definition
-const PIPELINE_STAGES = [
-  { id: 'new', label: 'مهتم جديد', color: 'border-r-4 border-r-blue-400 bg-blue-50/20' },
-  { id: 'visit', label: 'رفع مقاسات الموقع', color: 'border-r-4 border-r-indigo-400 bg-indigo-50/20' },
-  { id: 'design', label: 'مرحلة التصميم', color: 'border-r-4 border-r-[#B39367] bg-[#B39367]/10' },
-  { id: 'quotation', label: 'تقديم العرض المالي', color: 'border-r-4 border-r-amber-500 bg-amber-50/20' },
-  { id: 'negotiation', label: 'مفاوضات ومراجعة', color: 'border-r-4 border-r-orange-400 bg-orange-50/20' },
-  { id: 'contract', label: 'توقيع العقد الرسمي', color: 'border-r-4 border-r-emerald-500 bg-emerald-50/20' },
-  { id: 'production', label: 'التصنيع والورشة', color: 'border-r-4 border-r-purple-500 bg-purple-50/20' },
-  { id: 'installation', label: 'التركيب بالموقع', color: 'border-r-4 border-r-sky-500 bg-sky-50/20' },
-  { id: 'completed', label: 'تم التسليم والتشغيل', color: 'border-r-4 border-r-teal-600 bg-teal-50/20' },
-];
+const PIPELINE_STAGES = CRM_PIPELINE_STAGES.map((s) => ({
+  id: s.id,
+  label: s.label,
+  color: `border-r-4 ${s.color}`,
+}));
 
 const SOURCES = [
   { id: 'facebook', label: 'فيسبوك' },
@@ -325,17 +319,17 @@ export function CRMContainer({
       {activeTab === 'list' && (
         <Card className="border border-stone-200 bg-white">
           <CardContent className="p-0 overflow-x-auto">
-            <table className="w-full text-right text-xs">
+            <table className="w-full min-w-[52rem] table-fixed text-right text-xs border-collapse">
               <thead className="bg-stone-50 text-stone-500 border-b border-stone-200">
                 <tr>
-                  <th className="p-4 font-bold">الاسم الكلي</th>
-                  <th className="p-4 font-bold">رقم الهاتف</th>
-                  <th className="p-4 font-bold">رقم واتساب</th>
-                  <th className="p-4 font-bold">العنوان التفصيلي</th>
-                  <th className="p-4 font-bold">مرحلة العميل</th>
-                  <th className="p-4 font-bold">مصدر العميل</th>
-                  <th className="p-4 font-bold">تاريخ التسجيل</th>
-                  <th className="p-4 font-bold text-center">العمليات</th>
+                  <th className="p-3 font-bold w-[8.5rem] align-middle">الاسم الكلي</th>
+                  <th className="p-3 font-bold w-[6.5rem] align-middle whitespace-nowrap">رقم الهاتف</th>
+                  <th className="p-3 font-bold w-[6rem] align-middle">واتساب</th>
+                  <th className="p-3 font-bold w-[10rem] align-middle">العنوان</th>
+                  <th className="p-3 font-bold w-[8rem] align-middle">مرحلة العميل</th>
+                  <th className="p-3 font-bold w-[6.5rem] align-middle">المصدر</th>
+                  <th className="p-3 font-bold w-[5.5rem] align-middle whitespace-nowrap">التسجيل</th>
+                  <th className="p-3 font-bold w-[7.5rem] align-middle text-center">العمليات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-200 font-semibold text-neutral-900">
@@ -345,33 +339,33 @@ export function CRMContainer({
                   </tr>
                 ) : (
                   filteredLeads.map(lead => (
-                    <tr key={lead.id} className="hover:bg-stone-50/50">
-                      <td className="p-4 font-bold text-neutral-950">{lead.name}</td>
-                      <td className="p-4">{lead.phone}</td>
-                      <td className="p-4">
+                    <tr key={lead.id} className="hover:bg-stone-50/50 align-top">
+                      <td className="p-3 font-bold text-neutral-950 break-words leading-snug">{lead.name}</td>
+                      <td className="p-3 whitespace-nowrap tabular-nums">{lead.phone}</td>
+                      <td className="p-3">
                         <a 
                           href={`https://wa.me/${lead.whatsapp}`}
                           target="_blank" 
                           rel="noreferrer" 
-                          className="text-[#B39367] flex items-center gap-1 hover:underline text-[10px]"
+                          className="text-[#B39367] inline-flex items-center gap-1 hover:underline text-[10px] whitespace-nowrap"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                          فتح المحادثة
+                          <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                          واتساب
                         </a>
                       </td>
-                      <td className="p-4 truncate max-w-xs">{lead.address || '-'}</td>
-                      <td className="p-4">
-                        <Badge className="bg-neutral-900 text-stone-100 text-[10px] font-bold">
+                      <td className="p-3 break-words leading-snug text-stone-600">{lead.address || '-'}</td>
+                      <td className="p-3">
+                        <Badge className="bg-neutral-900 text-stone-100 text-[10px] font-bold whitespace-normal leading-snug text-center block w-full">
                           {PIPELINE_STAGES.find(s => s.id === lead.stage)?.label || lead.stage}
                         </Badge>
                       </td>
-                      <td className="p-4">
-                        <Badge variant="outline" className="border-stone-300 text-stone-600 text-[10px] font-bold">
+                      <td className="p-3">
+                        <Badge variant="outline" className="border-stone-300 text-stone-600 text-[10px] font-bold whitespace-nowrap">
                           {SOURCES.find(s => s.id === lead.source)?.label || lead.source}
                         </Badge>
                       </td>
-                      <td className="p-4 text-stone-500">{formatDate(lead.createdAt)}</td>
-                      <td className="p-4 text-center">
+                      <td className="p-3 text-stone-500 whitespace-nowrap text-[10px]">{formatDate(lead.createdAt)}</td>
+                      <td className="p-3 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <Button 
                             variant="ghost" 

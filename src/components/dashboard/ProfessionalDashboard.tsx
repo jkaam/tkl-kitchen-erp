@@ -14,6 +14,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { CRM_PIPELINE_STAGES } from '@/lib/crmPipeline';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -24,8 +25,6 @@ import {
   PieChart, 
   Pie, 
   Cell, 
-  BarChart, 
-  Bar 
 } from 'recharts';
 
 interface ProfessionalDashboardProps {
@@ -140,24 +139,25 @@ export function ProfessionalDashboard({
     }).filter(item => item.value > 0);
   }, [projects]);
 
-  // Chart Data: Lead Stages (CRM Pipeline conversion)
+  // Chart Data: Lead Stages (CRM Pipeline conversion) — aligned with CRM stages
   const funnelData = useMemo(() => {
-    const stages = [
-      { name: 'عملاء جدد', key: 'new' },
-      { name: 'رفع مقاسات', key: 'visit' },
-      { name: 'مرحلة التصميم', key: 'design' },
-      { name: 'تقديم عرض سعر', key: 'quotation' },
-      { name: 'العقد والإنتاج', key: 'contract' }
-    ];
-
-    return stages.map(st => {
-      const count = leads.filter(l => l.stage === st.key).length;
-      return {
-        name: st.name,
-        'العدد': count || 0
-      };
-    });
+    const counts = CRM_PIPELINE_STAGES.map((st) => ({
+      id: st.id,
+      label: st.label,
+      shortLabel: st.shortLabel,
+      count: leads.filter((l) => l.stage === st.id).length,
+    }));
+    const maxCount = Math.max(...counts.map((c) => c.count), 1);
+    return counts.map((c) => ({
+      ...c,
+      barWidth: c.count > 0 ? Math.max((c.count / maxCount) * 100, 12) : 0,
+    }));
   }, [leads]);
+
+  const funnelTotal = useMemo(
+    () => funnelData.reduce((sum, s) => sum + s.count, 0),
+    [funnelData]
+  );
 
   // Recent Activities Feed (mock log for executive feel)
   const recentActivities = useMemo(() => {
@@ -365,8 +365,17 @@ export function ProfessionalDashboard({
                       <stop offset="95%" stopColor="#1A1A1A" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="name" fontSize={11} stroke="#888888" />
-                  <YAxis fontSize={10} stroke="#888888" />
+                  <XAxis
+                    dataKey="name"
+                    fontSize={10}
+                    stroke="#888888"
+                    interval={0}
+                    angle={-35}
+                    textAnchor="end"
+                    height={56}
+                    tickMargin={8}
+                  />
+                  <YAxis fontSize={10} stroke="#888888" width={48} tickFormatter={(v) => `${v}`} />
                   <Tooltip formatter={(value) => `${parseFloat(value as string).toLocaleString()} ج.م`} />
                   <Area type="monotone" name="الإيرادات" dataKey="revenue" stroke="#B39367" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
                   <Area type="monotone" name="المصروفات" dataKey="expenses" stroke="#1A1A1A" strokeWidth={2} fillOpacity={1} fill="url(#colorExpenses)" />
@@ -442,22 +451,44 @@ export function ProfessionalDashboard({
             </CardTitle>
             <CardDescription className="text-xs">توزيع العملاء المهتمين على مراحل المبيعات والتعاقد</CardDescription>
           </CardHeader>
-          <CardContent className="h-64">
+          <CardContent className="min-h-[22rem] py-2">
             {leads.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-stone-400 text-sm">لا توجد بيانات قمع مبيعات</div>
+              <div className="h-52 flex items-center justify-center text-stone-400 text-sm">لا توجد بيانات قمع مبيعات</div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={funnelData} layout="vertical">
-                  <XAxis type="number" hide />
-                  <YAxis dataKey="name" type="category" stroke="#888888" fontSize={11} width={80} />
-                  <Tooltip />
-                  <Bar dataKey="العدد" fill="#B39367" radius={[0, 4, 4, 0]}>
-                    {funnelData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#B39367' : '#1A1A1A'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="space-y-2.5">
+                <p className="text-[10px] font-bold text-stone-500 text-left">
+                  إجمالي العملاء في القمع: <span className="text-neutral-900">{funnelTotal}</span>
+                </p>
+                <div className="space-y-2 max-h-[19rem] overflow-y-auto pr-1 scrollbar-thin">
+                  {funnelData.map((stage, index) => (
+                    <div key={stage.id} className="flex items-center gap-2.5 min-h-[2rem]">
+                      <div
+                        className="w-[5.5rem] shrink-0 text-[10px] font-bold text-stone-600 leading-snug text-right break-words"
+                        title={stage.label}
+                      >
+                        {stage.shortLabel}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="h-7 bg-stone-100 rounded-md overflow-hidden border border-stone-100">
+                          <div
+                            className="h-full rounded-md flex items-center justify-end px-2 transition-all duration-300"
+                            style={{
+                              width: `${stage.barWidth}%`,
+                              backgroundColor: index % 2 === 0 ? '#B39367' : '#1A1A1A',
+                            }}
+                          >
+                            {stage.count > 0 && (
+                              <span className="text-[10px] font-black text-white tabular-nums">
+                                {stage.count}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>

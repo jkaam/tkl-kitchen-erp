@@ -132,18 +132,18 @@ export function ProjectList({ projects, customers, onAdd, onEdit }: ProjectListP
         </div>
 
         {/* Projects Grid/Table */}
-        <div className="rounded-xl border border-stone-200 overflow-hidden">
-          <Table className="text-right text-xs">
+        <div className="rounded-xl border border-stone-200 overflow-x-auto">
+          <Table className="text-right text-xs min-w-[48rem] table-fixed w-full">
             <TableHeader className="bg-stone-50 text-stone-500">
               <TableRow>
-                <TableHead className="text-right font-bold">كود المشروع</TableHead>
-                <TableHead className="text-right font-bold">العميل</TableHead>
-                <TableHead className="text-right font-bold">المصمم / البائع</TableHead>
-                <TableHead className="text-right font-bold">حالة التنفيذ</TableHead>
-                <TableHead className="text-right font-bold">إجمالي العقد</TableHead>
-                <TableHead className="text-right font-bold">الأبعاد (ملم)</TableHead>
-                <TableHead className="text-right font-bold">موعد التسليم</TableHead>
-                <TableHead className="text-center font-bold">العمليات</TableHead>
+                <TableHead className="text-right font-bold w-[7rem]">كود المشروع</TableHead>
+                <TableHead className="text-right font-bold w-[6.5rem]">العميل</TableHead>
+                <TableHead className="text-right font-bold w-[7rem]">المصمم / البائع</TableHead>
+                <TableHead className="text-right font-bold w-[6.5rem]">حالة التنفيذ</TableHead>
+                <TableHead className="text-right font-bold w-[5.5rem]">إجمالي العقد</TableHead>
+                <TableHead className="text-right font-bold w-[7rem]">الأبعاد (ملم)</TableHead>
+                <TableHead className="text-right font-bold w-[5rem]">التسليم</TableHead>
+                <TableHead className="text-center font-bold w-[4rem]">العمليات</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="font-semibold text-neutral-800">
@@ -155,35 +155,35 @@ export function ProjectList({ projects, customers, onAdd, onEdit }: ProjectListP
                 </TableRow>
               ) : (
                 filteredProjects.map((project) => (
-                  <TableRow key={project.id} className="hover:bg-stone-50/50">
-                    <TableCell className="font-black text-neutral-950">
+                  <TableRow key={project.id} className="hover:bg-stone-50/50 align-top">
+                    <TableCell className="font-black text-neutral-950 break-words leading-snug text-[10px]">
                       {project.projectCode || `TKL-${new Date(project.createdAt).getFullYear()}-${project.id.slice(-4)}`}
                     </TableCell>
-                    <TableCell className="font-bold text-neutral-900">
+                    <TableCell className="font-bold text-neutral-900 break-words leading-snug">
                       {getCustomerName(project.customerId, project.customerName)}
                     </TableCell>
                     <TableCell>
-                      <div className="text-xs">
-                        <p className="font-bold text-neutral-950">{project.designerName || '-'}</p>
-                        <p className="text-[10px] text-stone-400 font-semibold">مندوب: {project.salesRep || '-'}</p>
+                      <div className="text-xs space-y-0.5">
+                        <p className="font-bold text-neutral-950 break-words leading-snug">{project.designerName || '-'}</p>
+                        <p className="text-[10px] text-stone-400 font-semibold break-words">مندوب: {project.salesRep || '-'}</p>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={`text-[10px] font-bold px-2 py-0.5 rounded ${statusColors[project.status] || 'bg-stone-100'}`}>
+                      <Badge className={`text-[10px] font-bold px-2 py-0.5 rounded whitespace-normal leading-snug ${statusColors[project.status] || 'bg-stone-100'}`}>
                         {statusLabels[project.status] || project.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-bold text-neutral-950">
+                    <TableCell className="font-bold text-neutral-950 whitespace-nowrap text-[10px]">
                       {formatCurrency(project.totalPrice || 0)}
                     </TableCell>
-                    <TableCell className="text-stone-600 text-[10px]">
+                    <TableCell className="text-stone-600 text-[10px] whitespace-nowrap tabular-nums">
                       {project.measurementsWidth && project.measurementsHeight ? (
-                        <span>{project.measurementsWidth}W × {project.measurementsDepth || 600}D × {project.measurementsHeight}H</span>
+                        <span>{project.measurementsWidth}×{project.measurementsDepth || 600}×{project.measurementsHeight}</span>
                       ) : (
                         <span className="text-stone-400">غير محدد</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-stone-500">
+                    <TableCell className="text-stone-500 whitespace-nowrap text-[10px]">
                       {project.deliveryDate ? formatDate(project.deliveryDate) : '-'}
                     </TableCell>
                     <TableCell className="text-center">
@@ -272,30 +272,23 @@ export function ProjectList({ projects, customers, onAdd, onEdit }: ProjectListP
                 </h4>
                 
                 {/* Visual workflow timeline bar */}
-                <div className="flex items-center justify-between text-[10px] font-bold text-stone-500 pt-2">
-                  {['design', 'approved', 'production', 'installation', 'completed'].map((stage, idx, arr) => {
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 pt-2">
+                  {['design', 'approved', 'production', 'installation', 'completed'].map((stage, idx) => {
                     const stages = ['design', 'approved', 'production', 'installation', 'completed'];
                     const currentIdx = stages.indexOf(viewProject.status);
                     const isActive = stages.indexOf(stage) <= currentIdx;
                     return (
-                      <div key={stage} className="flex-1 flex flex-col items-center relative">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 font-bold mb-1 z-10 transition-colors ${
+                      <div key={stage} className="flex flex-col items-center text-center gap-1">
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center border-2 font-bold shrink-0 transition-colors ${
                           isActive 
                             ? 'bg-[#B39367] text-neutral-950 border-[#B39367]' 
                             : 'bg-white text-stone-400 border-stone-300'
                         }`}>
                           {idx + 1}
                         </div>
-                        <span className={`text-[9px] font-extrabold ${isActive ? 'text-neutral-900 font-black' : 'text-stone-400'}`}>
+                        <span className={`text-[9px] font-extrabold leading-tight break-words max-w-[4.5rem] ${isActive ? 'text-neutral-900' : 'text-stone-400'}`}>
                           {statusLabels[stage]}
                         </span>
-                        
-                        {/* Connecting Line */}
-                        {idx < arr.length - 1 && (
-                          <div className={`absolute right-1/2 left-[-1/2] top-3 h-[2px] w-[200%] z-0 translate-x-[-50%] ${
-                            stages.indexOf(arr[idx + 1]) <= currentIdx ? 'bg-[#B39367]' : 'bg-stone-200'
-                          }`}></div>
-                        )}
                       </div>
                     );
                   })}
