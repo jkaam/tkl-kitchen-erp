@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 34 25% 97%; /* Warm White */
+    --foreground: 0 0% 7%; /* Matte Black text */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 0 0% 11%; /* Charcoal/Matte Black */
+    --primary-foreground: 34 25% 97%;
+    --secondary: 34 20% 92%; /* Soft Beige */
+    --secondary-foreground: 0 0% 11%;
+    --muted: 34 15% 90%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 34 35% 55%; /* Bronze Accent */
+    --accent-foreground: 34 25% 97%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 34 15% 85%;
+    --input: 34 15% 85%;
+    --ring: 34 35% 55%;
+    --radius: 0.75rem;
+    --sidebar-background: 0 0% 7%; /* Matte Black */
+    --sidebar-foreground: 34 20% 92%; /* Soft Beige */
+    --sidebar-primary: 34 35% 55%; /* Bronze */
+    --sidebar-primary-foreground: 0 0% 7%;
+    --sidebar-accent: 0 0% 13%; /* Charcoal */
+    --sidebar-accent-foreground: 34 35% 65%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 34 35% 55%;
+  }
+
+  .dark {
+    --background: 0 0% 7%; /* Matte Black */
+    --foreground: 34 25% 97%; /* Warm White */
+    --card: 0 0% 11%; /* Charcoal */
+    --card-foreground: 34 25% 97%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 34 25% 97%;
+    --primary: 34 35% 55%; /* Bronze */
+    --primary-foreground: 0 0% 7%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 34 25% 97%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 34 35% 55%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 34 35% 55%;
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 34 25% 97%;
+    --sidebar-primary: 34 35% 55%;
+    --sidebar-primary-foreground: 0 0% 7%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 34 25% 97%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 34 35% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
+  }
+}
+
+/* تنسيقات إضافية للتطبيق */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* تنسيق الجداول */
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* تنسيق البطاقات */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* تنسيق الأزرار */
+.btn-icon {
+  @apply inline-flex items-center justify-center;
+}
+
+/* تنسيق النماذج */
+.form-group {
+  @apply space-y-2;
+}
+
+/* تنسيق التنبيهات */
+.alert {
+  @apply p-4 rounded-lg;
+}
+
+.alert-warning {
+  @apply bg-yellow-50 border border-yellow-200 text-yellow-800;
+}
+
+.alert-danger {
+  @apply bg-red-50 border border-red-200 text-red-800;
+}
+
+.alert-success {
+  @apply bg-green-50 border border-green-200 text-green-800;
+}
+
+/* تنسيق الطباعة */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+  }
+}
